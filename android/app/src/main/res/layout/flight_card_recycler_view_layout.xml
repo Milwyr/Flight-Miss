@@ -1,42 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flight_card_flight_info_table_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/activity_vertical_margin">
 
     <TextView
         android:id="@+id/flight_card_recycler_view_column_company"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:text="Medium Text"
-        android:textColor="@color/black" />
+        android:text="@string/company"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/flight_card_recycler_view_column_flight"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:text="Medium Text"
-        android:textColor="@color/black" />
+        android:text="@string/flight"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/flight_card_recycler_view_column_departure"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:text="Medium Text"
-        android:textColor="@color/black" />
+        android:text="@string/departure"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/flight_card_recycler_view_column_arrival"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:text="Medium Text"
-        android:textColor="@color/black" />
+        android:text="@string/arrival"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
 </LinearLayout>

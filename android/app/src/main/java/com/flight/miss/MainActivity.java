@@ -1,5 +1,11 @@
 package com.flight.miss;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +13,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +46,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //region Instance variables
     private RecyclerView mRecyclerView;
     private ChatBotAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -52,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Timer timer;
 
     private List<Message> messages = new ArrayList<>();
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +97,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_show_notification) {
+            // Show notification
+            Intent notifyIntent = new Intent(this, MainActivity.class);
+            TaskStackBuilder taskStackBuilder =
+                    TaskStackBuilder.create(this).addNextIntent(notifyIntent);
+            PendingIntent pendingIntent = taskStackBuilder
+                    .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Title")
+                    .setContentText("Content")
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(1, builder.build());
+
+            return false;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (timer != null) {
@@ -100,9 +144,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         List<ChatBotMessage> tempList = new ArrayList<>();
         List<FlightInfoRow> rows = new ArrayList<>();
-        rows.add(new FlightInfoRow("F123456", "123", LocalTime.now(), LocalTime.now()));
-        rows.add(new FlightInfoRow("946sff", "456", LocalTime.now(), LocalTime.now()));
-        rows.add(new FlightInfoRow("sfsggg", "945", LocalTime.now(), LocalTime.now()));
+        rows.add(new FlightInfoRow("ABC", "123", LocalTime.now(), LocalTime.now()));
+        rows.add(new FlightInfoRow("DEF", "456", LocalTime.now(), LocalTime.now()));
+        rows.add(new FlightInfoRow("GHI", "945", LocalTime.now(), LocalTime.now()));
 
         tempList.add(new PlainTextMessage("I am going home now!", false));
         tempList.add(new FlightInfoMessage("Cathay", new int[]{1, 2}, rows, false));

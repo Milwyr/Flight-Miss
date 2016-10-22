@@ -14,7 +14,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Large Text"
+            android:text="@string/choose_your_next_flight"
             android:textAppearance="@android:style/TextAppearance.Large"
             android:textColor="#3F51B5" />
 
@@ -24,8 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/flight_card_title"
             android:paddingEnd="@dimen/activity_horizontal_margin"
-            android:paddingStart="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:paddingStart="@dimen/activity_horizontal_margin">
 
             <ImageView
                 android:id="@+id/flight_card_left_image"
@@ -34,7 +33,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/content_description"
                 android:paddingEnd="@dimen/vertical_padding_narrow"
-                android:src="@drawable/china" />
+                android:src="@drawable/hong_kong" />
 
             <ImageView
                 android:id="@+id/flight_card_right_image"
@@ -43,7 +42,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/content_description"
                 android:paddingStart="@dimen/vertical_padding_narrow"
-                android:src="@drawable/cambodia" />
+                android:src="@drawable/taiwan" />
         </LinearLayout>
 
         <LinearLayout
@@ -59,7 +58,9 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/content_description"
                 android:gravity="center_horizontal"
-                android:text="Medium Text" />
+                android:text="@string/hong_kong"
+                android:textColor="@color/themeColour"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/flight_card_right_image_description"
@@ -68,20 +69,40 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/content_description"
                 android:gravity="center_horizontal"
-                android:text="Medium Text" />
+                android:text="@string/taipei"
+                android:textColor="@color/themeColour"
+                android:textSize="16sp" />
         </LinearLayout>
+
+        <include
+            android:id="@+id/flight_card_flight_table_title"
+            layout="@layout/flight_card_recycler_view_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/flight_card_image_description_layout"
+            android:layout_marginTop="@dimen/activity_vertical_margin" />
+
+        <!-- Separation line -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/flight_card_flight_table_title"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:background="@color/black" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/flight_card_flight_table"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/flight_card_image_description_layout" />
+            android:layout_below="@id/flight_card_flight_table_title"
+            android:layout_marginTop="@dimen/activity_vertical_margin" />
 
         <!--&lt;!&ndash; A hard coded way to add margin below &ndash;&gt;-->
         <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="20dp"-->
-            <!--android:layout_below="@id/flight_card_flight_table"-->
-            <!--android:background="@color/chatBotBackground" />-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="20dp"-->
+        <!--android:layout_below="@id/flight_card_flight_table"-->
+        <!--android:background="@color/chatBotBackground" />-->
     </RelativeLayout>
 </android.support.v7.widget.CardView>

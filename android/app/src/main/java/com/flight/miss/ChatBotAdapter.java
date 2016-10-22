@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flight.miss.models.ChatBotMessage;
 import com.flight.miss.models.FlightInfoMessage;
@@ -38,14 +40,12 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     // A view holder that contains a view of plain text bot message
     private static class PlainTextViewHolder extends RecyclerView.ViewHolder {
         private RelativeLayout relativeLayout;
-        private CardView mCardView;
         private TextView messageTextView;
         private TextView timeStampTextView;
 
         PlainTextViewHolder(View v) {
             super(v);
             relativeLayout = (RelativeLayout) v.findViewById(R.id.card_view_relative_layout);
-            mCardView = (CardView) v.findViewById(R.id.card_view);
             messageTextView = (TextView) v.findViewById(R.id.card_view_message_text_view);
             timeStampTextView = (TextView) v.findViewById(R.id.card_view_timestamp_text_view);
         }
@@ -110,7 +110,7 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             FlightInfoViewHolder fvh = (FlightInfoViewHolder) holder;
             FlightInfoMessage flightInfoMessage = (FlightInfoMessage) mMessages.get(position);
             FlightInfoAdapter adapter = new FlightInfoAdapter(
-                    R.layout.flight_card_recycler_view_layout, flightInfoMessage.getFlightInfoRows());
+                    mContext, flightInfoMessage.getFlightInfoRows());
             fvh.recyclerView.setAdapter(adapter);
         }
     }
@@ -171,14 +171,13 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 }
 
 class FlightInfoAdapter extends RecyclerView.Adapter<FlightInfoAdapter.ViewHolder> {
-
-    // The resource id of flight info table
-    private int resource;
+    private Context mContext;
 
     private List<FlightInfoRow> flightInfoRows;
 
     // The view holder that holds the textviews in four columns
     static class ViewHolder extends RecyclerView.ViewHolder {
+        private LinearLayout rootLayout;
         private TextView companyTextView;
         private TextView flightTextView;
         private TextView departureTextView;
@@ -186,6 +185,7 @@ class FlightInfoAdapter extends RecyclerView.Adapter<FlightInfoAdapter.ViewHolde
 
         public ViewHolder(View itemView) {
             super(itemView);
+            rootLayout = (LinearLayout) itemView.findViewById(R.id.flight_card_flight_info_table_layout);
             companyTextView = (TextView) itemView.findViewById(R.id.flight_card_recycler_view_column_company);
             flightTextView = (TextView) itemView.findViewById(R.id.flight_card_recycler_view_column_flight);
             departureTextView = (TextView) itemView.findViewById(R.id.flight_card_recycler_view_column_departure);
@@ -193,8 +193,8 @@ class FlightInfoAdapter extends RecyclerView.Adapter<FlightInfoAdapter.ViewHolde
         }
     }
 
-    FlightInfoAdapter(int resource, List<FlightInfoRow> flightInfoRows) {
-        this.resource = resource;
+    FlightInfoAdapter(Context context, List<FlightInfoRow> flightInfoRows) {
+        mContext = context;
         this.flightInfoRows = flightInfoRows;
     }
 
@@ -209,10 +209,21 @@ class FlightInfoAdapter extends RecyclerView.Adapter<FlightInfoAdapter.ViewHolde
     public void onBindViewHolder(ViewHolder holder, int position) {
         FlightInfoRow row = this.flightInfoRows.get(position);
 
+        final int temp = position;
+        holder.rootLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Row " + temp, Toast.LENGTH_LONG).show();
+            }
+        });
+
         holder.companyTextView.setText(row.getCompany());
         holder.flightTextView.setText(row.getFlightNumber());
-        holder.departureTextView.setText("11:11");
-        holder.arrivalTextView.setText("11:11");
+
+        // Display departure and arrival time
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
+        holder.departureTextView.setText(formatter.print(row.getDepartureTime()));
+        holder.arrivalTextView.setText(formatter.print(row.getArrivalTime()));
     }
 
     @Override
