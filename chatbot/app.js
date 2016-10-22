@@ -8,9 +8,13 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 
 // Create bot and bind to console
-var connector = new builder.ConsoleConnector().listen();
+var connector = new builder.ChatConnector({
+    appId: process.env.MICROSOFT_APP_ID,
+    appPassword: process.env.MICROSOFT_APP_PASSWORD
+});
+//var connector = new builder.ConsoleConnector().listen();
 var bot = new builder.UniversalBot(connector);
-//server.post('/api/messages', connector.listen());
+server.post('/api/messages', connector.listen());
 
 // Create LUIS recognizer that points at our model and add it as the root '/' dialog for our Cortana Bot.
 var model = 'https://api.projectoxford.ai/luis/v1/application/preview?id=84d91a57-74ca-498e-bc58-586d8481c7de&subscription-key=c7b0f456efb24e289e1444bcf62d0a2e';
