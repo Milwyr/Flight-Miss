@@ -8,6 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.flight.miss.models.ChatBotMessage;
+import com.flight.miss.models.FlightInfoMessage;
+import com.flight.miss.models.PlainTextMessage;
+
+import org.joda.time.LocalTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,16 +37,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         List<ChatBotMessage> tempList = new ArrayList<>();
-        tempList.add(new ChatBotMessage("I am going home now!", false));
-        tempList.add(new ChatBotMessage("Just arrived!", false));
-        tempList.add(new ChatBotMessage("Let's have dinner!", false));
+        tempList.add(new FlightInfoMessage("Cathay", "F123456", LocalTime.now(), LocalTime.now(), false));
+        tempList.add(new PlainTextMessage("I am going home now!", false));
+        tempList.add(new PlainTextMessage("Just arrived!", false));
+//        tempList.add(new PlainTextMessage("Let's have dinner!", false));
 
         // Use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // Specify an adapter (see also next example)
-        mAdapter = new ChatBotAdapter(tempList);
+        mAdapter = new ChatBotAdapter(this, tempList);
         mRecyclerView.setAdapter(mAdapter);
 
         mMessageEditText = (EditText) findViewById(R.id.message_edit_text);
@@ -52,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_button:
-                mAdapter.add(new ChatBotMessage("New message", true));
+                mAdapter.add(new PlainTextMessage("New message", true));
                 break;
         }
     }

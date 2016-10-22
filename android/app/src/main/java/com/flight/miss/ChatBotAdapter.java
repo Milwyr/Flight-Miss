@@ -1,12 +1,18 @@
 package com.flight.miss;
 
+import android.content.Context;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.flight.miss.models.ChatBotMessage;
+import com.flight.miss.models.PlainTextMessage;
 
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -18,18 +24,21 @@ import java.util.List;
 /**
  * Created by Milton on 22/10/2016.
  */
-public class ChatBotAdapter extends RecyclerView.Adapter<ChatBotAdapter.ViewHolder> {
+public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private final int PLAIN_TEXT = 0;
+    private final int FLIGHT_INFO = 1;
+
+    private Context mContext;
     private List<ChatBotMessage> mMessages;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        protected RelativeLayout relativeLayout;
-        protected CardView mCardView;
-        protected TextView messageTextView;
-        protected TextView timeStampTextView;
+    private static class PlainTextViewHolder extends RecyclerView.ViewHolder {
+        private RelativeLayout relativeLayout;
+        private CardView mCardView;
+        private TextView messageTextView;
+        private TextView timeStampTextView;
 
-        public ViewHolder(View v) {
+        PlainTextViewHolder(View v) {
             super(v);
             relativeLayout = (RelativeLayout) v.findViewById(R.id.card_view_relative_layout);
             mCardView = (CardView) v.findViewById(R.id.card_view);
@@ -38,7 +47,35 @@ public class ChatBotAdapter extends RecyclerView.Adapter<ChatBotAdapter.ViewHold
         }
     }
 
-    public ChatBotAdapter(List<ChatBotMessage> messages) {
+    private static class FlightInfoViewHolder extends RecyclerView.ViewHolder {
+        private TextView titleTextView;
+        private ImageView leftImageView;
+        private ImageView rightImageView;
+        private TextView leftImageDescriptionTextView;
+        private TextView rightImageDescriptionTextView;
+        private RecyclerView recyclerView;
+
+        FlightInfoViewHolder(Context context, View v) {
+            super(v);
+            titleTextView = (TextView) v.findViewById(R.id.flight_card_title);
+            leftImageView = (ImageView) v.findViewById(R.id.flight_card_left_image);
+            rightImageView = (ImageView) v.findViewById(R.id.flight_card_right_image);
+            leftImageDescriptionTextView = (TextView) v.findViewById(R.id.flight_card_left_image_description);
+            rightImageDescriptionTextView = (TextView) v.findViewById(R.id.flight_card_right_image_description);
+
+            // Use a linear layout manager
+//            recyclerView = (RecyclerView) v.findViewById(R.id.flight_card_flight_table);
+//            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+            // Specify an adapter (see also next example)
+//            FlightInfoAdapter = new ChatBotAdapter(tempList);
+//            recyclerView.setAdapter(mAdapter);
+        }
+    }
+
+    public ChatBotAdapter(Context context, List<ChatBotMessage> messages) {
+        mContext = context;
+
         if (messages == null || messages.isEmpty()) {
             mMessages = new ArrayList<>();
         } else {
@@ -47,30 +84,54 @@ public class ChatBotAdapter extends RecyclerView.Adapter<ChatBotAdapter.ViewHold
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_view_layout, parent, false);
-        return new ViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == PLAIN_TEXT) {
+            View plainTextView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.card_view_layout, parent, false);
+            return new PlainTextViewHolder(plainTextView);
+        } else {
+            View flighInfoView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.flight_card_layout, parent, false);
+            return new FlightInfoViewHolder(mContext, flighInfoView);
+        }
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        ChatBotMessage message = mMessages.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof PlainTextViewHolder) {
+            processPlainText(holder, position);
+        } else if (holder instanceof FlightInfoViewHolder) {
+            // DO something
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mMessages.get(position) instanceof PlainTextMessage) {
+            return PLAIN_TEXT;
+        } else {
+            return FLIGHT_INFO;
+        }
+    }
+
+    private void processPlainText(RecyclerView.ViewHolder holder, int position) {
+        PlainTextViewHolder pH = (PlainTextViewHolder) holder;
+        PlainTextMessage message = (PlainTextMessage) mMessages.get(position);
 
         // Messages from server should align to the left, while messages from device to the right
         if (!message.getIsSentFromDevice()) {
             // Align both text views to the left
             RelativeLayout.LayoutParams relativeLayoutParams =
-                    (RelativeLayout.LayoutParams) holder.relativeLayout.getLayoutParams();
+                    (RelativeLayout.LayoutParams) pH.relativeLayout.getLayoutParams();
             relativeLayoutParams.removeRule(RelativeLayout.ALIGN_PARENT_END);
             relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
         }
 
-        holder.messageTextView.setText(mMessages.get(position).getText());
+        pH.messageTextView.setText(message.getText());
 
         // Display the time now
         DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
-        holder.timeStampTextView.setText(formatter.print(LocalTime.now()));
+        pH.timeStampTextView.setText(formatter.print(LocalTime.now()));
     }
 
     @Override
@@ -81,5 +142,11 @@ public class ChatBotAdapter extends RecyclerView.Adapter<ChatBotAdapter.ViewHold
     public void add(ChatBotMessage message) {
         mMessages.add(message);
         notifyItemInserted(mMessages.size());
+    }
+
+    public void add(List<ChatBotMessage> messages) {
+        int startPosition = mMessages.size();
+        mMessages.addAll(messages);
+        notifyItemRangeInserted(startPosition, messages.size());
     }
 }

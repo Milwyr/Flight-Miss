@@ -1,19 +1,14 @@
-package com.flight.miss;
+package com.flight.miss.models;
 
 /**
  * Created by Milton on 22/10/2016.
  */
-public class ChatBotMessage {
-    private String text;
+
+public abstract class ChatBotMessage {
     private boolean isSentFromDevice;
 
-    public ChatBotMessage(String text, boolean isSentFromDevice) {
-        this.text = text;
+    public ChatBotMessage(boolean isSentFromDevice) {
         this.isSentFromDevice = isSentFromDevice;
-    }
-
-    public String getText() {
-        return this.text;
     }
 
     /**
