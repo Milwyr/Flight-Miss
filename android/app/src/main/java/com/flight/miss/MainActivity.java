@@ -65,11 +65,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 conversationId = response.body().conversationId;
                 postMessage("init");
-             }
+            }
 
             @Override
             public void onFailure(Call<Conversation> call, Throwable t) {
-                addMessage("Bot could not be found. Check internet connection.");
+                addMessage(getResources().getString(R.string.error_message_bot_not_connected));
             }
         });
 
@@ -125,7 +125,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String msg = mMessageEditText.getText().toString();
                 mAdapter.add(new PlainTextMessage(msg, true));
                 postMessage(msg);
+
+                // Reset text view to be empty
                 mMessageEditText.setText("");
+
+                // Scroll to the bottom every time when send button is clicked
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
                 break;
         }
     }
@@ -153,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                addMessage("Bot could no longer be reached. Check internet connection.");
+                addMessage(getResources().getString(R.string.error_message_bot_not_connected));
             }
         });
     }
@@ -185,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<Messages> call, Throwable t) {
-                addMessage("Bot could no longer be reached. Check internet connection.");
+                addMessage(getResources().getString(R.string.error_message_bot_not_connected));
             }
         });
 

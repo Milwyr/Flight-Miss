@@ -219,24 +219,4 @@ class FlightInfoAdapter extends RecyclerView.Adapter<FlightInfoAdapter.ViewHolde
     public int getItemCount() {
         return this.flightInfoRows.size();
     }
-
-//        @NonNull
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//            VH viewHolder;
-//            if (convertView == null) {
-//                // Inflate a new view for a row in the flight info table
-//                viewHolder = new VH();
-//                LayoutInflater.from(getContext()).inflate(this.resource, parent, false);
-//
-//
-//                // Cache the viewHolder object inside the fresh view
-//                convertView.setTag(viewHolder);
-//            } else {
-//                // Retrieve the view holder if the view is recycled
-//                viewHolder = (VH) convertView.getTag();
-//            }
-//
-//            return convertView;
-//        }
 }
