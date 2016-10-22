@@ -1,21 +1,36 @@
 package com.flight.miss;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.flight.miss.chatbotAPI.Chatbot;
+import com.flight.miss.chatbotAPI.JsonObjects.Conversation;
+import com.flight.miss.chatbotAPI.JsonObjects.Message;
+import com.flight.miss.chatbotAPI.JsonObjects.Messages;
 import com.flight.miss.models.ChatBotMessage;
 import com.flight.miss.models.FlightInfoMessage;
 import com.flight.miss.models.PlainTextMessage;
 
 import org.joda.time.LocalTime;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -26,11 +41,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText mMessageEditText;
     private Button mSendButton;
 
+    private Chatbot bot;
+
+    private String conversationId = "";
+    private String watermark;
+    private Timer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initialiseComponents();
+        bot = new Chatbot();
+        Call<Conversation> rsp = bot.api.startConversation();
+
+        rsp.enqueue(new Callback<Conversation>() {
+            @Override
+            public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+                if (response.code() != 200) {
+                    String s = response.message();
+                }
+                conversationId = response.body().conversationId;
+                postMessage("init");
+             }
+
+            @Override
+            public void onFailure(Call<Conversation> call, Throwable t) {
+                addMessage("Bot could not be found. Check internet connection.");
+            }
+        });
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                pollMessages();
+            }
+        }, 1000, 1000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     private void initialiseComponents() {
@@ -59,8 +115,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_button:
-                mAdapter.add(new PlainTextMessage("New message", true));
+                String msg = mMessageEditText.getText().toString();
+                mAdapter.add(new PlainTextMessage(msg, true));
+                postMessage(msg);
+                mMessageEditText.setText("");
                 break;
         }
+    }
+
+    private void postMessage(final String msg) {
+        Message message = new Message(msg);
+        message.from = "testClient";
+        Call<ResponseBody> rsp = bot.api.sendMessage(conversationId, message);
+        rsp.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 204) {
+                    // message sent. begin polling
+                    //addMessage(msg);
+                    new Handler(Looper.myLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            pollMessages();
+                        }
+                    }, 300);
+                } else {
+                    String s = response.message();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                addMessage("Bot could no longer be reached. Check internet connection.");
+            }
+        });
+    }
+
+    private void pollMessages() {
+        Call<Messages> rsp;
+        if (watermark == null) {
+            rsp = bot.api.getUnseenMessages(conversationId);
+        } else {
+            rsp = bot.api.getUnseenMessages(conversationId, watermark);
+        }
+        rsp.enqueue(new Callback<Messages>() {
+            @Override
+            public void onResponse(Call<Messages> call, Response<Messages> response) {
+                if (response.code() == 200) {
+                    String s = response.code() + " ";
+                    if (response.body() != null && response.body().watermark != null) {
+                        watermark = response.body().watermark;
+                        for (Message m : response.body().messages) {
+                            if (m.from.equals("cathaymissedflightbot")) {
+                                addMessage(m.text);
+                            }
+                        }
+                        s += watermark + " " + response.body().messages.length + " total messages.";
+                    }
+                    Log.i("POLLING", s);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Messages> call, Throwable t) {
+                addMessage("Bot could no longer be reached. Check internet connection.");
+            }
+        });
+
+    }
+
+    private void addMessage(String s) {
+        mAdapter.add(new PlainTextMessage(s, false));
     }
 }
