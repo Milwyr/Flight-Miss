@@ -92,7 +92,7 @@ var dialog = new builder.IntentDialog({ recognizers: [recognizer] });
 dialog.onDefault(builder.DialogAction.send("Please contact a Customer Service Representative for more information."));
 bot.dialog('/', [
     function (session) {
-        session.privateConversationData.date = getRoundedDate(new Date());
+        session.privateConversationData.date = getDateString(new Date());
         builder.Prompts.confirm(session, 'Do you want to rebook your flight now?');
     },
     function (session, results) {
