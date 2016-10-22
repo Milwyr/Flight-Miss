@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.flight.miss.chatbotAPI.Chatbot;
 import com.flight.miss.chatbotAPI.JsonObjects.Conversation;
@@ -18,6 +19,7 @@ import com.flight.miss.chatbotAPI.JsonObjects.Messages;
 import com.flight.miss.chatbotAPI.JsonObjects.OptionParser;
 import com.flight.miss.models.ChatBotMessage;
 import com.flight.miss.models.FlightInfoMessage;
+import com.flight.miss.models.FlightInfoRow;
 import com.flight.miss.models.PlainTextMessage;
 
 import org.joda.time.LocalTime;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView.LayoutManager mLayoutManager;
 
     private EditText mMessageEditText;
-    private Button mSendButton;
+    private ImageButton mSendButton;
 
     private Chatbot bot;
 
@@ -97,10 +99,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         List<ChatBotMessage> tempList = new ArrayList<>();
-        tempList.add(new FlightInfoMessage("Cathay", "F123456", LocalTime.now(), LocalTime.now(), false));
+        List<FlightInfoRow> rows = new ArrayList<>();
+        rows.add(new FlightInfoRow("F123456", "123", LocalTime.now(), LocalTime.now()));
+        rows.add(new FlightInfoRow("946sff", "456", LocalTime.now(), LocalTime.now()));
+        rows.add(new FlightInfoRow("sfsggg", "945", LocalTime.now(), LocalTime.now()));
+
+        tempList.add(new PlainTextMessage("I am going home now!", false));
+        tempList.add(new FlightInfoMessage("Cathay", new int[]{1, 2}, rows, false));
         tempList.add(new PlainTextMessage("I am going home now!", false));
         tempList.add(new PlainTextMessage("Just arrived!", false));
-//        tempList.add(new PlainTextMessage("Let's have dinner!", false));
 
         // Use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
@@ -111,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setAdapter(mAdapter);
 
         mMessageEditText = (EditText) findViewById(R.id.message_edit_text);
-        mSendButton = (Button) findViewById(R.id.send_button);
+        mSendButton = (ImageButton) findViewById(R.id.send_button);
         mSendButton.setOnClickListener(this);
     }
 

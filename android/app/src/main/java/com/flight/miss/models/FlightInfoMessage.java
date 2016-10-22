@@ -1,39 +1,32 @@
 package com.flight.miss.models;
 
-import org.joda.time.LocalTime;
+import java.util.List;
 
 /**
- * Created by Milton on 22/10/2016.
+ * Created by Milton on 23/10/2016.
  */
-
 public class FlightInfoMessage extends ChatBotMessage {
-    private String company;
-    private String flightNumber;
-    private LocalTime departureTime;
-    private LocalTime arrivalTime;
+    private String title;
+    private int[] images;
+    private List<FlightInfoRow> flightInfoRows;
 
-    public FlightInfoMessage(String company, String flightNumber,
-                             LocalTime departureTime, LocalTime arrivalTime, boolean isSentFromDevice) {
+    public FlightInfoMessage(String title, int[] images,
+                             List<FlightInfoRow> flightInfoRows, boolean isSentFromDevice) {
         super(isSentFromDevice);
-        this.company = company;
-        this.flightNumber = flightNumber;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
+        this.title = title;
+        this.images = images;
+        this.flightInfoRows = flightInfoRows;
     }
 
-    public String getCompany() {
-        return company;
+    public String getTitle() {
+        return this.title;
     }
 
-    public String getFlightNumber() {
-        return flightNumber;
+    public int[] getImages() {
+        return this.images;
     }
 
-    public LocalTime getDepartureTime() {
-        return departureTime;
-    }
-
-    public LocalTime getArrivalTime() {
-        return arrivalTime;
+    public List<FlightInfoRow> getFlightInfoRows() {
+        return this.flightInfoRows;
     }
 }
