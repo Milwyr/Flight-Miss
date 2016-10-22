@@ -15,6 +15,7 @@ import com.flight.miss.chatbotAPI.Chatbot;
 import com.flight.miss.chatbotAPI.JsonObjects.Conversation;
 import com.flight.miss.chatbotAPI.JsonObjects.Message;
 import com.flight.miss.chatbotAPI.JsonObjects.Messages;
+import com.flight.miss.chatbotAPI.JsonObjects.OptionParser;
 import com.flight.miss.models.ChatBotMessage;
 import com.flight.miss.models.FlightInfoMessage;
 import com.flight.miss.models.PlainTextMessage;
@@ -23,6 +24,7 @@ import org.joda.time.LocalTime;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String conversationId = "";
     private String watermark;
     private Timer timer;
+
+    private List<Message> messages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,7 +171,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         watermark = response.body().watermark;
                         for (Message m : response.body().messages) {
                             if (m.from.equals("cathaymissedflightbot")) {
+                                OptionParser op = new OptionParser(m.text);
+                                if (op.hasOptions) {
+                                    String msg = op.message;
+                                    Log.i("OPTIONS", op.message + " " + Arrays.toString(op.options));
+                                }
                                 addMessage(m.text);
+                                messages.add(m);
                             }
                         }
                         s += watermark + " " + response.body().messages.length + " total messages.";

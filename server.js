@@ -1,5 +1,11 @@
 var restify = require('restify');
 var builder = require('botbuilder');
+var rest = require('rest');
+
+function createUrl() {
+    var url = "http://52.27.248.59/api/v0/schedule/records?limit=6";
+    url += "&scheduledDepartureTimeMin=2015-07-01T00:00:00Z&scheduledDepartureTimeMax=2015-09-01T00:00:00Z&sortAsc=scheduledDepartureTime";
+}
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -40,7 +46,10 @@ bot.dialog('/', [
 ]);
 bot.dialog('/suggestFlight', [
     function(session) {
-        builder.Prompts.confirm(session, 'The next available flight will be departing at __. Is that ok?');
+        rest(createUrl()).then(function(response) {
+            builder.Prompts.confirm(session, 'The next available flight will be departing at ' + 
+            response.data[0].scheduledDepartureTime + '. Is that ok?');    
+        });
     },
     function(session, results, next) {
         if (results.response) {
