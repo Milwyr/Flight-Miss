@@ -4,4 +4,15 @@
 
     <string name="send">Send</string>
     <string name="type_a_message">Type a message</string>
+
+    <string name="company">Company</string>
+    <string name="flight">Flight</string>
+    <string name="departure">Departure</string>
+    <string name="arrival">Arrival</string>
+
+    <string name="choose_your_next_flight">Choose your next flight</string>
+    <string name="hong_kong">Hong Kong</string>
+    <string name="taipei">Taipei</string>
+
+    <string name="error_message_bot_not_connected">Bot could no longer be reached. Check internet connection.</string>
 </resources>
