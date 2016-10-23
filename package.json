@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Milwyr/Flight-Miss#readme",
   "dependencies": {
     "botbuilder": "^3.3.3",
+    "rest": "^2.0.0",
     "restify": "^4.1.1"
   }
 }
