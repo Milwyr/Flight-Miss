@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton mSendButton;
     private Button[] optionButtons;
 
-    private Chatbot bot;
+    private static Chatbot bot;
 
     private String conversationId = "";
     private HashSet<String> receivedIds = new HashSet<>();
@@ -76,7 +78,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Timer timer;
 
     private List<Message> messages = new ArrayList<>();
-    private FlightInfoMessage mFlightInfoMessage;
+    private QRCodeMessage boardingPassMessage;
+    private QRCodeMessage foodVoucherMessage;
     //endregion
 
     @Override
@@ -142,16 +145,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             return false;
         } else if (item.getItemId() == R.id.action_boarding_pass) {
-            try {
                 // TODO: Change title dynamically
-                Bitmap qrCode = generateQRCode("123sfsfssdfsgsdfbhfdjffjdgdfsfsfsg");
-                mAdapter.add(new QRCodeMessage(qrCode, mFlightInfoMessage, true));
-
-                // Scroll to the bottom every time when send button is clicked
-                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
-            } catch (WriterException e) {
-                e.printStackTrace();
+            if (boardingPassMessage != null) {
+                mAdapter.add(boardingPassMessage);
             }
+
+            if (foodVoucherMessage != null) mAdapter.add(boardingPassMessage);
+
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
+
+            mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -176,9 +181,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rows.add(new FlightInfoRow("ABC", "123", now, now));
         rows.add(new FlightInfoRow("DEF", "456", now, now));
         rows.add(new FlightInfoRow("GHI", "945", now, now));
-
-        mFlightInfoMessage = new FlightInfoMessage("Cathay", rows, false);
-        tempList.add(mFlightInfoMessage);
 
         // Use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
@@ -238,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
     }
 
-    private void postMessage(final String msg) {
+    public void postMessage(final String msg) {
         Message message = new Message(msg);
         message.from = "testClient";
         Call<ResponseBody> rsp = bot.api.sendMessage(conversationId, message);
@@ -288,24 +290,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     if (ep.entityType == EntityParser.BOARDING_PASS) {
                                         try {
                                             Bitmap qrCode = generateQRCode(ep.boardingInfo.toString());
-                                            addToList(new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, Collections.singletonList(ep.boardingInfo), false), false));
+                                            boardingPassMessage = new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, Collections.singletonList(ep.boardingInfo), false), false );
+                                            addToList(boardingPassMessage);
                                         } catch (WriterException e) {
                                             e.printStackTrace();
                                         }
                                     } else if (ep.entityType == EntityParser.FOOD_VOUCHER) {
                                         try {
                                             Bitmap qrCode = generateQRCode("Voucher=150HKD");
-                                            addToList(new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, null, false), false));
+                                            foodVoucherMessage = new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, null, false), false );
+                                            addToList(foodVoucherMessage);
                                         } catch (WriterException e) {
                                             e.printStackTrace();
                                         }
-                                        ;
                                     }
+
+                                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imm.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
                                 } else {
                                     OptionParser op = new OptionParser(m.text);
                                     if (op.hasOptions) {
                                         if (op.hasBookingOptions) {
                                             addToList(new FlightInfoMessage(op.message, op.bookingOptions, false));
+
+                                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                            imm.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
                                         } else {
                                             String msg = op.message;
                                             Log.i("OPTIONS", op.message + " " + Arrays.toString(op.options));

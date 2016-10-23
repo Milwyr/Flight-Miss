@@ -41,13 +41,13 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     // A view holder that contains a view of plain text bot message
     private static class PlainTextViewHolder extends RecyclerView.ViewHolder {
-        private RelativeLayout relativeLayout;
+        private CardView relativeLayout;
         private TextView messageTextView;
         private TextView timeStampTextView;
 
         PlainTextViewHolder(View v) {
             super(v);
-            relativeLayout = (RelativeLayout) v.findViewById(R.id.card_view_relative_layout);
+            relativeLayout = (CardView) v.findViewById(R.id.card_view);
             messageTextView = (TextView) v.findViewById(R.id.card_view_message_text_view);
             timeStampTextView = (TextView) v.findViewById(R.id.card_view_timestamp_text_view);
         }
@@ -278,13 +278,16 @@ class FlightInfoAdapter extends RecyclerView.Adapter<FlightInfoAdapter.ViewHolde
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        FlightInfoRow row = this.flightInfoRows.get(position);
+        final FlightInfoRow row = this.flightInfoRows.get(position);
 
-        final int temp = position;
+        final int temp = position + 1;
         holder.rootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Row " + temp, Toast.LENGTH_LONG).show();
+                MainActivity activity = (MainActivity) mContext;
+                if (activity != null) {
+                    activity.postMessage(temp + "");
+                }
             }
         });
 
