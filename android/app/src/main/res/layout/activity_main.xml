@@ -15,28 +15,26 @@
         android:id="@+id/main_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/main_relative_layout">
+        android:layout_above="@+id/main_relative_layout"
+        android:gravity="center"
+        android:paddingBottom="2dp">
 
         <Button
             android:id="@+id/button1"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
+            android:backgroundTint="@color/themeColour"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Medium Text" />
+            android:text="Medium Text"
+            android:textColor="#fff" />
 
         <Button
             android:id="@+id/button2"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
+            android:backgroundTint="@color/themeColour"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Medium Text" />
+            android:text="Medium Text"
+            android:textColor="#fff" />
 
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Medium Text" />
     </LinearLayout>
 
     <RelativeLayout

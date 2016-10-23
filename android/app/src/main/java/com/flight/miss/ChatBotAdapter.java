@@ -221,9 +221,9 @@ class FlightInfoAdapter extends RecyclerView.Adapter<FlightInfoAdapter.ViewHolde
         holder.flightTextView.setText(row.getFlightNumber());
 
         // Display departure and arrival time
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
-        holder.departureTextView.setText(formatter.print(row.getDepartureTime()));
-        holder.arrivalTextView.setText(formatter.print(row.getArrivalTime()));
+
+        holder.departureTextView.setText(row.getDepartureTime());
+        holder.arrivalTextView.setText(row.getArrivalTime());
     }
 
     @Override

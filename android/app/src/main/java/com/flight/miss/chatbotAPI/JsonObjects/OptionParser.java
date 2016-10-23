@@ -1,5 +1,7 @@
 package com.flight.miss.chatbotAPI.JsonObjects;
 
+import com.flight.miss.models.FlightInfoRow;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -10,17 +12,22 @@ import java.util.regex.Pattern;
  */
 public class OptionParser {
     public boolean hasOptions = false;
+    public boolean hasBookingOptions = false;
     public String message;
     public String[] options;
+    public List<FlightInfoRow> bookingOptions;
 
     public OptionParser(String text) {
         if (!testNumberedList(text)) {
             if (!testParentheticList(text)) {
                 if (!testQuestionMark(text)) {
                     hasOptions = false;
+                    return;
                 }
             }
         }
+
+        testBookingOptions();
     }
 
     private boolean testNumberedList(String text) {
@@ -80,5 +87,21 @@ public class OptionParser {
         }
 
         return false;
+    }
+
+    private boolean testBookingOptions() {
+        List<FlightInfoRow> books = new ArrayList<>();
+        for (String s : options) {
+            String[] parts = s.split(" ");
+            if (parts.length != 4) return false;
+            if (!parts[2].contains(":00Z")) return false;
+            if (!parts[3].contains(":00Z")) return false;
+
+            books.add(new FlightInfoRow(s));
+        }
+
+        bookingOptions = books;
+
+        return true;
     }
 }
