@@ -24,9 +24,11 @@ import android.widget.ImageButton;
 
 import com.flight.miss.chatbotAPI.Chatbot;
 import com.flight.miss.chatbotAPI.JsonObjects.Conversation;
+import com.flight.miss.chatbotAPI.JsonObjects.EntityParser;
 import com.flight.miss.chatbotAPI.JsonObjects.Message;
 import com.flight.miss.chatbotAPI.JsonObjects.Messages;
 import com.flight.miss.chatbotAPI.JsonObjects.OptionParser;
+import com.flight.miss.models.ButtonOptionMessage;
 import com.flight.miss.models.ChatBotMessage;
 import com.flight.miss.models.FlightInfoMessage;
 import com.flight.miss.models.FlightInfoRow;
@@ -38,6 +40,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private EditText mMessageEditText;
     private ImageButton mSendButton;
+    private Button[] optionButtons;
 
     private Chatbot bot;
 
@@ -163,9 +168,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         List<ChatBotMessage> tempList = new ArrayList<>();
         List<FlightInfoRow> rows = new ArrayList<>();
-        rows.add(new FlightInfoRow("ABC", "123", LocalTime.now(), LocalTime.now()));
-        rows.add(new FlightInfoRow("DEF", "456", LocalTime.now(), LocalTime.now()));
-        rows.add(new FlightInfoRow("GHI", "945", LocalTime.now(), LocalTime.now()));
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
+        String now = formatter.print(LocalTime.now());
+        rows.add(new FlightInfoRow("ABC", "123", now, now));
+        rows.add(new FlightInfoRow("DEF", "456", now, now));
+        rows.add(new FlightInfoRow("GHI", "945", now, now));
 
         tempList.add(new PlainTextMessage("I am going home now!", false));
         mFlightInfoMessage = new FlightInfoMessage("Cathay", rows, false);
@@ -184,6 +191,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mMessageEditText = (EditText) findViewById(R.id.message_edit_text);
         mSendButton = (ImageButton) findViewById(R.id.send_button);
         mSendButton.setOnClickListener(this);
+
+        optionButtons = new Button[2];
+        optionButtons[0] = (Button) findViewById(R.id.button1);
+        optionButtons[1] = (Button) findViewById(R.id.button2);
+        hideButtons();
+        optionButtons[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(optionButtons[0].getText().toString());
+            }
+        });
+        optionButtons[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(optionButtons[1].getText().toString());
+            }
+        });
+
     }
 
     @Override
@@ -191,16 +216,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.send_button:
                 String msg = mMessageEditText.getText().toString();
-                mAdapter.add(new PlainTextMessage(msg, true));
-                postMessage(msg);
+                sendMessage(msg);
 
                 // Reset text view to be empty
                 mMessageEditText.setText("");
-
-                // Scroll to the bottom every time when send button is clicked
-                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
                 break;
         }
+    }
+
+    private void sendMessage(String msg) {
+        addToList(new PlainTextMessage(msg, true));
+        hideButtons();
+        postMessage(msg);
+
+
+    }
+
+    private void addToList(ChatBotMessage msg) {
+        mAdapter.add(msg);
+        // Scroll to the bottom every time when send button is clicked
+        mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
     }
 
     private void postMessage(final String msg) {
@@ -247,13 +282,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         watermark = response.body().watermark;
                         for (Message m : response.body().messages) {
                             if (m.from.equals("cathaymissedflightbot")) {
-                                OptionParser op = new OptionParser(m.text);
-                                if (op.hasOptions) {
-                                    String msg = op.message;
-                                    Log.i("OPTIONS", op.message + " " + Arrays.toString(op.options));
+                                EntityParser ep = new EntityParser(m.text);
+                                if (ep.isEntity) {
+                                    if (ep.entityType == EntityParser.BOARDING_PASS) {
+                                        addMessage(ep.message);
+                                    } else if (ep.entityType == EntityParser.FOOD_VOUCHER) {
+                                        addMessage(ep.message);
+                                    }
+                                } else {
+                                    OptionParser op = new OptionParser(m.text);
+                                    if (op.hasOptions) {
+                                        if (op.hasBookingOptions) {
+                                            addToList(new FlightInfoMessage(op.message, new int[]{1,2}, op.bookingOptions, false));
+                                        } else {
+                                            String msg = op.message;
+                                            Log.i("OPTIONS", op.message + " " + Arrays.toString(op.options));
+                                            addToList(new ButtonOptionMessage(op.message, op.options));
+
+                                            if (op.options.length >= 2) {
+                                                optionButtons[0].setText(op.options[0]);
+                                                optionButtons[1].setText(op.options[1]);
+                                                optionButtons[0].setVisibility(View.VISIBLE);
+                                                optionButtons[1].setVisibility(View.VISIBLE);
+                                            }
+                                        }
+
+                                    } else {
+                                        addMessage(m.text);
+                                        messages.add(m);
+                                    }
                                 }
-                                addMessage(m.text);
-                                messages.add(m);
                             }
                         }
                         s += watermark + " " + response.body().messages.length + " total messages.";
@@ -286,6 +344,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void addMessage(String s) {
-        mAdapter.add(new PlainTextMessage(s, false));
+        addToList(new PlainTextMessage(s, false));
     }
+
+    private void hideButtons() {
+        for (Button b : optionButtons) {
+            b.setVisibility(View.GONE);
+        }
+    }
+
 }
