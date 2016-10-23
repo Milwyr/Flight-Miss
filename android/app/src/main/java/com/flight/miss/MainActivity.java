@@ -46,6 +46,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         public void run() {
                             pollMessages();
                         }
-                    }, 300);
+                    }, 500);
                 } else {
                     String s = response.message();
                 }
@@ -285,15 +286,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 EntityParser ep = new EntityParser(m.text);
                                 if (ep.isEntity) {
                                     if (ep.entityType == EntityParser.BOARDING_PASS) {
-                                        addMessage(ep.message);
+                                        try {
+                                            Bitmap qrCode = generateQRCode(ep.boardingInfo.toString());
+                                            addToList(new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, Collections.singletonList(ep.boardingInfo), false), false ));
+                                        } catch (WriterException e) {
+                                            e.printStackTrace();
+                                        }
                                     } else if (ep.entityType == EntityParser.FOOD_VOUCHER) {
-                                        addMessage(ep.message);
+                                        try {
+                                            Bitmap qrCode = generateQRCode("Voucher=150HKD");
+                                            addToList(new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, null, false), false ));
+                                        } catch (WriterException e) {
+                                            e.printStackTrace();
+                                        };
                                     }
                                 } else {
                                     OptionParser op = new OptionParser(m.text);
                                     if (op.hasOptions) {
                                         if (op.hasBookingOptions) {
-                                            addToList(new FlightInfoMessage(op.message, new int[]{1,2}, op.bookingOptions, false));
+                                            addToList(new FlightInfoMessage(op.message, op.bookingOptions, false));
                                         } else {
                                             String msg = op.message;
                                             Log.i("OPTIONS", op.message + " " + Arrays.toString(op.options));

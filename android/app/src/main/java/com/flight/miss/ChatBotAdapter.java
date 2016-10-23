@@ -125,16 +125,17 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof PlainTextViewHolder) {
+        ChatBotMessage message = mMessages.get(position);
+        if (message instanceof PlainTextMessage) {
             processPlainText(holder, position);
-        } else if (holder instanceof FlightInfoViewHolder) {
+        } else if (message instanceof FlightInfoMessage) {
             // Specify an adapter (see also next example)
             FlightInfoViewHolder fvh = (FlightInfoViewHolder) holder;
             FlightInfoMessage flightInfoMessage = (FlightInfoMessage) mMessages.get(position);
             FlightInfoAdapter adapter = new FlightInfoAdapter(
                     mContext, flightInfoMessage.getFlightInfoRows());
             fvh.recyclerView.setAdapter(adapter);
-        } else if (holder instanceof QRCodeViewHolder) {
+        } else if (message instanceof QRCodeMessage) {
             QRCodeViewHolder qvh = (QRCodeViewHolder) holder;
             QRCodeMessage qrCodeMessage = (QRCodeMessage) mMessages.get(position);
 

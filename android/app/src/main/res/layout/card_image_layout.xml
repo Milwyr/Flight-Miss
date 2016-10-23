@@ -10,13 +10,15 @@
 
         <TextView
             android:id="@+id/qr_code_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:text="Large Text"
             android:textAppearance="@android:style/TextAppearance.Large"
-            android:textColor="@color/themeColour" />
+            android:textColor="@color/themeColour"
+            android:gravity="center"
+            android:layout_margin="5dp" />
 
         <ImageView
             android:id="@+id/qr_code_image_view"
