@@ -56,23 +56,21 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     // A view holder that contains a flight info bot message
     private static class FlightInfoViewHolder extends RecyclerView.ViewHolder {
         private TextView titleTextView;
-        private ImageView leftImageView;
-        private ImageView rightImageView;
-        private TextView leftImageDescriptionTextView;
-        private TextView rightImageDescriptionTextView;
         private RecyclerView recyclerView;
+        private TextView timeStampTextView;
 
         FlightInfoViewHolder(Context context, View v) {
             super(v);
             titleTextView = (TextView) v.findViewById(R.id.flight_card_title);
-            leftImageView = (ImageView) v.findViewById(R.id.flight_card_left_image);
-            rightImageView = (ImageView) v.findViewById(R.id.flight_card_right_image);
-            leftImageDescriptionTextView = (TextView) v.findViewById(R.id.flight_card_left_image_description);
-            rightImageDescriptionTextView = (TextView) v.findViewById(R.id.flight_card_right_image_description);
 
             // Use a linear layout manager
             recyclerView = (RecyclerView) v.findViewById(R.id.flight_card_flight_table);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            timeStampTextView = (TextView) v.findViewById(R.id.flight_info_timestamp_text_view);
+
+            // Display the time now
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
+            timeStampTextView.setText(formatter.print(LocalTime.now()));
         }
     }
 
@@ -82,6 +80,7 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private ImageView imageView;
         private RecyclerView recyclerView;
         private View flightInfoTableView;
+        private TextView timeStampTextView;
 
         QRCodeViewHolder(Context context, View v) {
             super(v);
@@ -93,6 +92,12 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
             flightInfoTableView = v.findViewById(R.id.qr_code_flight_info_table);
+
+            timeStampTextView = (TextView) v.findViewById(R.id.flight_info_timestamp_text_view);
+
+            // Display the time now
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
+            timeStampTextView.setText(formatter.print(LocalTime.now()));
         }
     }
 
@@ -183,7 +188,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             // Change text colour to be black
             int black = ResourcesCompat.getColor(mContext.getResources(), R.color.black, null);
             pH.messageTextView.setTextColor(black);
-            pH.timeStampTextView.setTextColor(black);
+
+            // Change text colour to be grey
+            int grey = ResourcesCompat.getColor(mContext.getResources(), R.color.grey, null);
+            pH.timeStampTextView.setTextColor(grey);
         }
 
         pH.messageTextView.setText(message.getText());
