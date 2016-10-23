@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/card_view_message_text_view"
-                android:layout_toEndOf="@id/card_view_message_text_view"
+                android:layout_alignParentEnd="true"
                 android:text="Small Text"
                 android:textColor="@color/white" />
         </RelativeLayout>

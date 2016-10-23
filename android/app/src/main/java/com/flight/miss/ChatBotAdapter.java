@@ -173,6 +173,7 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         PlainTextViewHolder pH = (PlainTextViewHolder) holder;
         PlainTextMessage message = (PlainTextMessage) mMessages.get(position);
 
+        int pixels = Math.round(50 * mContext.getResources().getDisplayMetrics().density);
         // Messages from server should align to the left, while messages from device to the right
         if (!message.getIsSentFromDevice()) {
             // Align both text views to the left
@@ -180,6 +181,8 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     (RelativeLayout.LayoutParams) pH.relativeLayout.getLayoutParams();
             relativeLayoutParams.removeRule(RelativeLayout.ALIGN_PARENT_END);
             relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+            relativeLayoutParams.setMarginEnd(pixels);
+            relativeLayoutParams.setMarginStart(0);
 
             // Change background colour to be white
             int white = ResourcesCompat.getColor(mContext.getResources(), R.color.white, null);
@@ -192,6 +195,26 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             // Change text colour to be grey
             int grey = ResourcesCompat.getColor(mContext.getResources(), R.color.grey, null);
             pH.timeStampTextView.setTextColor(grey);
+        } else {
+            // Align both text views to the left
+            RelativeLayout.LayoutParams relativeLayoutParams =
+                    (RelativeLayout.LayoutParams) pH.relativeLayout.getLayoutParams();
+            relativeLayoutParams.removeRule(RelativeLayout.ALIGN_PARENT_START);
+            relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            relativeLayoutParams.setMarginEnd(0);
+            relativeLayoutParams.setMarginStart(pixels);
+
+            // Change background colour to be white
+            int theme = ResourcesCompat.getColor(mContext.getResources(), R.color.themeColour, null);
+            pH.relativeLayout.setBackgroundColor(theme);
+
+            // Change text colour to be black
+            int white = ResourcesCompat.getColor(mContext.getResources(), R.color.white, null);
+            pH.messageTextView.setTextColor(white);
+
+            // Change text colour to be grey
+           // int grey = ResourcesCompat.getColor(mContext.getResources(), R.color.grey, null);
+            pH.timeStampTextView.setTextColor(white);
         }
 
         pH.messageTextView.setText(message.getText());

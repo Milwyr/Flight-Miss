@@ -42,7 +42,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+        android:padding="3dp">
 
         <ImageButton
             android:id="@+id/send_button"
@@ -51,14 +52,14 @@
             android:layout_alignParentEnd="true"
             android:backgroundTint="@color/themeColour"
             android:src="@drawable/ic_send_white_24dp"
-            android:text="@string/send" />
+            android:text="@string/send"
+            android:layout_centerVertical="true" />
 
         <EditText
             android:id="@+id/message_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/send_button"
-            android:padding="3dp"
             android:hint="@string/type_a_message"
             android:inputType="text" />
     </RelativeLayout>

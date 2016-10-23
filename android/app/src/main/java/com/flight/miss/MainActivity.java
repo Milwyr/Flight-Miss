@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Chatbot bot;
 
     private String conversationId = "";
+    private HashSet<String> receivedIds = new HashSet<>();
     private String watermark;
     private Timer timer;
 
@@ -282,7 +284,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (response.body() != null && response.body().watermark != null) {
                         watermark = response.body().watermark;
                         for (Message m : response.body().messages) {
-                            if (m.from.equals("cathaymissedflightbot")) {
+                            if (m.from.equals("cathaymissedflightbot") && !receivedIds.contains(m.id)) {
+                                receivedIds.add(m.id);
                                 EntityParser ep = new EntityParser(m.text);
                                 if (ep.isEntity) {
                                     if (ep.entityType == EntityParser.BOARDING_PASS) {

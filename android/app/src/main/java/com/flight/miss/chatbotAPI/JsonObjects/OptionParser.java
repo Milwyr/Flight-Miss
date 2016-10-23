@@ -83,6 +83,15 @@ public class OptionParser {
             options = new String[2];
             options[0] = "Yes";
             options[1] = "No";
+
+            if (text.contains(":00Z")) {
+                int dateStart = text.indexOf(":00Z") - 16;
+                int dateLength = 20;
+                String date = text.substring(dateStart, dateStart + dateLength);
+                date = FlightInfoRow.parseDate(date);
+                message = text.substring(0, dateStart) + date + text.substring(dateStart + dateLength);
+            }
+
             return true;
         }
 
@@ -101,6 +110,7 @@ public class OptionParser {
         }
 
         bookingOptions = books;
+        hasBookingOptions = true;
 
         return true;
     }

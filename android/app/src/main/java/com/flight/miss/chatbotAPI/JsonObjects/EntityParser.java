@@ -23,7 +23,7 @@ public class EntityParser {
             int end = text.indexOf("\n", start);
 
             boardingInfo = new FlightInfoRow(text.substring(start + 2, end));
-            message = text.substring(0, start + 2) + boardingInfo.toString() + text.substring(end);
+            message = text.substring(0, start) + text.substring(end);
         } else if (text.toLowerCase().contains("voucher")) {
             isEntity = true;
             entityType = FOOD_VOUCHER;
