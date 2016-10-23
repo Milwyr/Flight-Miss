@@ -7,4 +7,8 @@
         android:title="@string/type_a_message"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_boarding_pass"
+        android:icon="@drawable/ic_send_white_24dp"
+        android:title="Boarding pass" />
 </menu>
