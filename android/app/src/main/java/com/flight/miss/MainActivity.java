@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 
 import com.flight.miss.chatbotAPI.Chatbot;
 import com.flight.miss.chatbotAPI.JsonObjects.Conversation;
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView.LayoutManager mLayoutManager;
 
     private EditText mMessageEditText;
-    private ImageButton mSendButton;
+    private FloatingActionButton mSendButton;
     private Button[] optionButtons;
 
     private Chatbot bot;
@@ -131,8 +131,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Notification.Builder builder = new Notification.Builder(this)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                     .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle("Title")
-                    .setContentText("Content")
+                    .setContentTitle(getResources().getString(R.string.notification_title))
+                    .setContentText(getResources().getString(R.string.notification_description))
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
 
@@ -177,11 +177,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rows.add(new FlightInfoRow("DEF", "456", now, now));
         rows.add(new FlightInfoRow("GHI", "945", now, now));
 
-        tempList.add(new PlainTextMessage("I am going home now!", false));
         mFlightInfoMessage = new FlightInfoMessage("Cathay", rows, false);
         tempList.add(mFlightInfoMessage);
-        tempList.add(new PlainTextMessage("I am going home now!", false));
-        tempList.add(new PlainTextMessage("Just arrived!", false));
 
         // Use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
@@ -192,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setAdapter(mAdapter);
 
         mMessageEditText = (EditText) findViewById(R.id.message_edit_text);
-        mSendButton = (ImageButton) findViewById(R.id.send_button);
+        mSendButton = (FloatingActionButton) findViewById(R.id.send_button);
         mSendButton.setOnClickListener(this);
 
         optionButtons = new Button[2];
@@ -291,17 +288,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     if (ep.entityType == EntityParser.BOARDING_PASS) {
                                         try {
                                             Bitmap qrCode = generateQRCode(ep.boardingInfo.toString());
-                                            addToList(new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, Collections.singletonList(ep.boardingInfo), false), false ));
+                                            addToList(new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, Collections.singletonList(ep.boardingInfo), false), false));
                                         } catch (WriterException e) {
                                             e.printStackTrace();
                                         }
                                     } else if (ep.entityType == EntityParser.FOOD_VOUCHER) {
                                         try {
                                             Bitmap qrCode = generateQRCode("Voucher=150HKD");
-                                            addToList(new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, null, false), false ));
+                                            addToList(new QRCodeMessage(qrCode, new FlightInfoMessage(ep.message, null, false), false));
                                         } catch (WriterException e) {
                                             e.printStackTrace();
-                                        };
+                                        }
+                                        ;
                                     }
                                 } else {
                                     OptionParser op = new OptionParser(m.text);

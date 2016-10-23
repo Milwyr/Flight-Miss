@@ -9,9 +9,9 @@
         android:id="@+id/flight_card_recycler_view_column_company"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="center_horizontal"
-        android:text="@string/company"
+        android:text="@string/carrier"
         android:textColor="@color/black"
         android:textSize="16sp" />
 
@@ -19,7 +19,7 @@
         android:id="@+id/flight_card_recycler_view_column_flight"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="center_horizontal"
         android:text="@string/flight"
         android:textColor="@color/black"
@@ -29,7 +29,7 @@
         android:id="@+id/flight_card_recycler_view_column_departure"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="center_horizontal"
         android:text="@string/departure"
         android:textColor="@color/black"
@@ -39,10 +39,16 @@
         android:id="@+id/flight_card_recycler_view_column_arrival"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="center_horizontal"
         android:text="@string/arrival"
         android:textColor="@color/black"
         android:textSize="16sp" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/ic_chevron_right_black_24dp" />
 
 </LinearLayout>

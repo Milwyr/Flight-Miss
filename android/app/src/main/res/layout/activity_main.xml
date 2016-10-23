@@ -22,16 +22,16 @@
         <Button
             android:id="@+id/button1"
             android:layout_width="wrap_content"
-            android:backgroundTint="@color/themeColour"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/themeColour"
             android:text="Medium Text"
             android:textColor="#fff" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
-            android:backgroundTint="@color/themeColour"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/themeColour"
             android:text="Medium Text"
             android:textColor="#fff" />
 
@@ -45,20 +45,24 @@
         android:background="#FFFFFF"
         android:padding="3dp">
 
-        <ImageButton
+        <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/send_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
             android:backgroundTint="@color/themeColour"
             android:src="@drawable/ic_send_white_24dp"
             android:text="@string/send"
-            android:layout_centerVertical="true" />
+            app:fabSize="mini" />
 
         <EditText
             android:id="@+id/message_edit_text"
             android:layout_width="match_parent"
+            android:backgroundTint="@color/white"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/send_button"
             android:layout_toStartOf="@id/send_button"
             android:hint="@string/type_a_message"
             android:inputType="text" />
@@ -68,7 +72,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/main_linear_layout"/>
+        android:layout_above="@id/main_linear_layout"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

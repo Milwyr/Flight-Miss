@@ -19,38 +19,53 @@
             android:textAppearance="@android:style/TextAppearance.Large"
             android:textColor="#3F51B5" />
 
-        <LinearLayout
-            android:id="@+id/flight_card_image_layout"
+        <FrameLayout
+            android:id="@+id/flight_card_image_frame_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/flight_card_title"
-            android:paddingEnd="@dimen/activity_horizontal_margin"
-            android:paddingStart="@dimen/activity_horizontal_margin">
+            android:layout_below="@id/flight_card_title">
+
+            <LinearLayout
+                android:id="@+id/flight_card_image_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:paddingStart="@dimen/activity_horizontal_margin">
+
+                <ImageView
+                    android:id="@+id/flight_card_left_image"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/content_description"
+                    android:paddingEnd="@dimen/vertical_padding_narrow"
+                    android:src="@drawable/hong_kong" />
+
+                <ImageView
+                    android:id="@+id/flight_card_right_image"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/content_description"
+                    android:paddingStart="@dimen/vertical_padding_narrow"
+                    android:src="@drawable/taiwan" />
+            </LinearLayout>
 
             <ImageView
-                android:id="@+id/flight_card_left_image"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_gravity="center"
                 android:contentDescription="@string/content_description"
-                android:paddingEnd="@dimen/vertical_padding_narrow"
-                android:src="@drawable/hong_kong" />
+                android:src="@drawable/airplane_96" />
+        </FrameLayout>
 
-            <ImageView
-                android:id="@+id/flight_card_right_image"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/content_description"
-                android:paddingStart="@dimen/vertical_padding_narrow"
-                android:src="@drawable/taiwan" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/flight_card_image_description_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/flight_card_image_layout">
+            android:layout_below="@id/flight_card_image_frame_layout">
 
             <TextView
                 android:id="@+id/flight_card_left_image_description"

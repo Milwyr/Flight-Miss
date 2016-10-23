@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Notifly</string>
+    <string name="app_name">notiFLY</string>
     <string name="content_description">Image</string>
 
     <string name="send">Send</string>
     <string name="type_a_message">Type a message</string>
 
-    <string name="company">Company</string>
+    <string name="carrier">Carrier</string>
     <string name="flight">Flight</string>
     <string name="departure">Departure</string>
     <string name="arrival">Arrival</string>
@@ -13,6 +13,10 @@
     <string name="choose_your_next_flight">Choose your next flight</string>
     <string name="hong_kong">Hong Kong</string>
     <string name="taipei">Taipei</string>
+
+    <!-- Notification -->
+    <string name="notification_title">Click to rebook</string>
+    <string name="notification_description">There has been a change to your itinerary</string>
 
     <string name="error_message_bot_not_connected">Bot could no longer be reached. Check internet connection.</string>
 </resources>
