@@ -32,6 +32,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/qr_code_image_view"
+            android:layout_marginBottom="@dimen/vertical_padding_narrow"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:visibility="gone" />
     </RelativeLayout>
 

@@ -11,4 +11,6 @@
 
     <!-- Very light grey -->
     <color name="chatBotBackground">#EAEAEA</color>
+
+    <color name="grey">#9E9E9E</color>
 </resources>
