@@ -84,12 +84,12 @@ public class OptionParser {
             options[0] = "Yes";
             options[1] = "No";
 
-            if (text.contains(":00Z")) {
-                int dateStart = text.indexOf(":00Z") - 16;
+            while (message.contains(":00Z")) {
+                int dateStart = message.indexOf(":00Z") - 16;
                 int dateLength = 20;
-                String date = text.substring(dateStart, dateStart + dateLength);
+                String date = message.substring(dateStart, dateStart + dateLength);
                 date = FlightInfoRow.parseDate(date);
-                message = text.substring(0, dateStart) + date + text.substring(dateStart + dateLength);
+                message = message.substring(0, dateStart) + date + message.substring(dateStart + dateLength);
             }
 
             return true;
