@@ -5,7 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +33,11 @@ import com.flight.miss.models.ChatBotMessage;
 import com.flight.miss.models.FlightInfoMessage;
 import com.flight.miss.models.FlightInfoRow;
 import com.flight.miss.models.PlainTextMessage;
+import com.flight.miss.models.QRCodeMessage;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -66,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Timer timer;
 
     private List<Message> messages = new ArrayList<>();
+    private FlightInfoMessage mFlightInfoMessage;
     //endregion
 
     @Override
@@ -130,6 +138,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             notificationManager.notify(1, builder.build());
 
             return false;
+        } else if (item.getItemId() == R.id.action_boarding_pass) {
+            try {
+                // TODO: Change title dynamically
+                Bitmap qrCode = generateQRCode("123sfsfssdfsgsdfbhfdjffjdgdfsfsfsg");
+                mAdapter.add(new QRCodeMessage(qrCode, mFlightInfoMessage, true));
+
+                // Scroll to the bottom every time when send button is clicked
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -156,7 +175,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rows.add(new FlightInfoRow("GHI", "945", now, now));
 
         tempList.add(new PlainTextMessage("I am going home now!", false));
-        tempList.add(new FlightInfoMessage("Cathay", new int[]{1, 2}, rows, false));
+        mFlightInfoMessage = new FlightInfoMessage("Cathay", rows, false);
+        tempList.add(mFlightInfoMessage);
         tempList.add(new PlainTextMessage("I am going home now!", false));
         tempList.add(new PlainTextMessage("Just arrived!", false));
 
@@ -306,6 +326,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+    }
+
+    private Bitmap generateQRCode(String inputData) throws WriterException {
+        QRCodeWriter writer = new QRCodeWriter();
+        BitMatrix bitMatrix = writer.encode(inputData, BarcodeFormat.QR_CODE, 600, 600);
+        Bitmap bitmap = Bitmap.createBitmap(600, 600, Bitmap.Config.ARGB_8888);
+
+        // Fill black and white dots in the QR code
+        for (int i = 0; i < 600; i++) {//width
+            for (int j = 0; j < 600; j++) {//height
+                bitmap.setPixel(i, j, bitMatrix.get(i, j) ? Color.BLACK : Color.WHITE);
+            }
+        }
+
+        return bitmap;
     }
 
     private void addMessage(String s) {

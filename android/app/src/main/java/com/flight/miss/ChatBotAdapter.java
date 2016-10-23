@@ -18,6 +18,7 @@ import com.flight.miss.models.ChatBotMessage;
 import com.flight.miss.models.FlightInfoMessage;
 import com.flight.miss.models.FlightInfoRow;
 import com.flight.miss.models.PlainTextMessage;
+import com.flight.miss.models.QRCodeMessage;
 
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -33,6 +34,7 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private final int PLAIN_TEXT = 0;
     private final int FLIGHT_INFO = 1;
+    private final int QR_CODE = 2;
 
     private Context mContext;
     private List<ChatBotMessage> mMessages;
@@ -71,10 +73,26 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             // Use a linear layout manager
             recyclerView = (RecyclerView) v.findViewById(R.id.flight_card_flight_table);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        }
+    }
 
-//            // Specify an adapter (see also next example)
-//            FlightInfoAdapter adapter = new FlightInfoAdapter(context, R.layout.flight_card_recycler_view_layout);
-//            recyclerView.setAdapter(adapter);
+    // A view holder that contains a QR code bot message
+    private static class QRCodeViewHolder extends RecyclerView.ViewHolder {
+        private TextView titleTextView;
+        private ImageView imageView;
+        private RecyclerView recyclerView;
+        private View flightInfoTableView;
+
+        QRCodeViewHolder(Context context, View v) {
+            super(v);
+            imageView = (ImageView) v.findViewById(R.id.qr_code_image_view);
+            titleTextView = (TextView) v.findViewById(R.id.qr_code_text_view);
+
+            // Use a linear layout manager
+            recyclerView = (RecyclerView) v.findViewById(R.id.flight_card_flight_table);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+            flightInfoTableView = v.findViewById(R.id.qr_code_flight_info_table);
         }
     }
 
@@ -94,10 +112,14 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View plainTextView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.card_view_layout, parent, false);
             return new PlainTextViewHolder(plainTextView);
-        } else {
+        } else if (viewType == FLIGHT_INFO) {
             View flighInfoView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.flight_card_layout, parent, false);
             return new FlightInfoViewHolder(mContext, flighInfoView);
+        } else {
+            View qrCodeView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.card_image_layout, parent, false);
+            return new QRCodeViewHolder(mContext, qrCodeView);
         }
     }
 
@@ -112,15 +134,32 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             FlightInfoAdapter adapter = new FlightInfoAdapter(
                     mContext, flightInfoMessage.getFlightInfoRows());
             fvh.recyclerView.setAdapter(adapter);
+        } else if (holder instanceof QRCodeViewHolder) {
+            QRCodeViewHolder qvh = (QRCodeViewHolder) holder;
+            QRCodeMessage qrCodeMessage = (QRCodeMessage) mMessages.get(position);
+
+            qvh.titleTextView.setText(qrCodeMessage.getFlightInfoMessage().getTitle());
+            qvh.imageView.setImageBitmap(qrCodeMessage.getBitmap());
+
+            if (qrCodeMessage.getFlightInfoMessage().getFlightInfoRows() != null &&
+                    qrCodeMessage.getFlightInfoMessage().getFlightInfoRows().size() > 0) {
+                FlightInfoAdapter adapter = new FlightInfoAdapter(
+                        mContext, qrCodeMessage.getFlightInfoMessage().getFlightInfoRows());
+                qvh.flightInfoTableView.setVisibility(View.VISIBLE);
+                qvh.recyclerView.setAdapter(adapter);
+            }
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (mMessages.get(position) instanceof PlainTextMessage) {
+        ChatBotMessage chatBotMessage = mMessages.get(position);
+        if (chatBotMessage instanceof PlainTextMessage) {
             return PLAIN_TEXT;
-        } else {
+        } else if (chatBotMessage instanceof FlightInfoMessage) {
             return FLIGHT_INFO;
+        } else {
+            return QR_CODE;
         }
     }
 
