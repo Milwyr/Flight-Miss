@@ -52,18 +52,18 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_margin="10dp"
-            android:backgroundTint="@color/themeColour"
             android:src="@drawable/ic_send_white_24dp"
             android:text="@string/send"
+            app:backgroundTint="@color/themeColour"
             app:fabSize="mini" />
 
         <EditText
             android:id="@+id/message_edit_text"
             android:layout_width="match_parent"
-            android:backgroundTint="@color/white"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/send_button"
             android:layout_toStartOf="@id/send_button"
+            android:backgroundTint="@color/white"
             android:hint="@string/type_a_message"
             android:inputType="text" />
     </RelativeLayout>
